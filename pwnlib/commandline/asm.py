@@ -1,18 +1,14 @@
-from __future__ import absolute_import
-from __future__ import division
-
+#!/usr/bin/env python3
 import argparse
 import sys
 
-import pwnlib.args
-pwnlib.args.free_form = False
-
+from keystone import *
 from pwn import *
+from pwnlib.context import LocalContext
 from pwnlib.commandline import common
 
-parser = common.parser_commands.add_parser(
+parser = argparse.ArgumentParser(
     'asm',
-    help = 'Assemble shellcode into bytes',
     description = 'Assemble shellcode into bytes',
 )
 
@@ -97,8 +93,55 @@ parser.add_argument(
     action='store_true'
 )
 
-def main(args):
-    tty    = args.output.isatty()
+@LocalContext
+def asm(shellcode):
+    try:
+        assembler = _assembler()
+        encoding, _count = assembler.asm(shellcode, as_bytes=True)
+    except KsError as e:
+        print("ERROR: %s" %e)
+        exit(2)
+    return encoding
+
+def _assembler():
+    E = {
+        'big':    KS_MODE_BIG_ENDIAN,
+        'little': KS_MODE_LITTLE_ENDIAN,
+    }[context.endianness]
+
+    B = {16: KS_MODE_16, 32: KS_MODE_32, 64: KS_MODE_64}[context.bits]
+
+    assemblers = {
+        'i386'   : Ks(KS_ARCH_X86, B),
+        'amd64'  : Ks(KS_ARCH_X86, B),
+        'thumb'  : Ks(KS_ARCH_ARM, KS_MODE_THUMB + E),
+        'arm'    : Ks(KS_ARCH_ARM, KS_MODE_ARM + E),
+        'aarch64': Ks(KS_ARCH_ARM64, E),
+        'mips'   : Ks(KS_ARCH_MIPS, KS_MODE_MIPS32 + E),
+        'mips64' : Ks(KS_ARCH_MIPS, KS_MODE_MIPS64 + E),
+        'sparc':   Ks(KS_ARCH_SPARC, KS_MODE_SPARC32 + E),
+        # FIXME: Invalid mode (KS_ERR_MODE)
+        # 'sparc64': Ks(KS_ARCH_SPARC, KS_MODE_SPARC64 + E),
+
+        # Powerpc wants -mbig or -mlittle, and -mppc32 or -mppc64
+        # Why is this?
+        'powerpc':   Ks(KS_ARCH_PPC, E + B),
+        'powerpc64': Ks(KS_ARCH_PPC, KS_MODE_PPC64 + E),
+        # ia64 only accepts -mbe or -mle
+        # 'ia64':    None,
+        # FIXME: waiting new keystone
+        # riscv64-unknown-elf-as supports riscv32 as well as riscv64
+        # 'riscv32': None,
+        # 'riscv64': None,
+    }
+
+    assembler = assemblers.get(context.arch) or exit(69)
+
+    return assembler
+
+def main():
+    args = parser.parse_args()
+    tty = args.output.isatty()
 
     if args.infile.isatty() and not args.lines:
         parser.print_usage()
@@ -137,4 +180,4 @@ def main(args):
         args.output.write(b'\n')
 
 if __name__ == '__main__':
-    pwnlib.commandline.common.main(__file__)
+    main()
