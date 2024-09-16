@@ -99,8 +99,8 @@ def asm(shellcode):
         assembler = _assembler()
         encoding, _count = assembler.asm(shellcode, as_bytes=True)
     except KsError as e:
-        print("ERROR: %s" %e)
-        exit(2)
+        print(f"ERROR: {e}", file=sys.stderr)
+        raise e
     return encoding
 
 def _assembler():
@@ -111,22 +111,19 @@ def _assembler():
 
     B = {16: KS_MODE_16, 32: KS_MODE_32, 64: KS_MODE_64}[context.bits]
 
-    assemblers = {
-        'i386'   : Ks(KS_ARCH_X86, B),
-        'amd64'  : Ks(KS_ARCH_X86, B),
-        'thumb'  : Ks(KS_ARCH_ARM, KS_MODE_THUMB + E),
-        'arm'    : Ks(KS_ARCH_ARM, KS_MODE_ARM + E),
-        'aarch64': Ks(KS_ARCH_ARM64, E),
-        'mips'   : Ks(KS_ARCH_MIPS, KS_MODE_MIPS32 + E),
-        'mips64' : Ks(KS_ARCH_MIPS, KS_MODE_MIPS64 + E),
-        'sparc':   Ks(KS_ARCH_SPARC, KS_MODE_SPARC32 + E),
-        # FIXME: Invalid mode (KS_ERR_MODE)
-        # 'sparc64': Ks(KS_ARCH_SPARC, KS_MODE_SPARC64 + E),
-
+    params = {
+        'i386'   : (KS_ARCH_X86, B),
+        'amd64'  : (KS_ARCH_X86, B),
+        'thumb'  : (KS_ARCH_ARM, KS_MODE_THUMB + E),
+        'arm'    : (KS_ARCH_ARM, KS_MODE_ARM + E),
+        'aarch64': (KS_ARCH_ARM64, KS_MODE_ARM + E),
+        'mips'   : (KS_ARCH_MIPS, KS_MODE_MIPS32 + E),
+        'mips64' : (KS_ARCH_MIPS, KS_MODE_MIPS64 + E),
+        'sparc':   (KS_ARCH_SPARC, KS_MODE_SPARC32 + E),
+        'sparc64': (KS_ARCH_SPARC, KS_MODE_SPARC64 + E),
         # Powerpc wants -mbig or -mlittle, and -mppc32 or -mppc64
-        # Why is this?
-        'powerpc':   Ks(KS_ARCH_PPC, E + B),
-        'powerpc64': Ks(KS_ARCH_PPC, KS_MODE_PPC64 + E),
+        'powerpc':   (KS_ARCH_PPC, KS_MODE_PPC32 + E + B),
+        'powerpc64': (KS_ARCH_PPC, KS_MODE_PPC64 + E + B),
         # ia64 only accepts -mbe or -mle
         # 'ia64':    None,
         # FIXME: waiting new keystone
@@ -135,7 +132,8 @@ def _assembler():
         # 'riscv64': None,
     }
 
-    assembler = assemblers.get(context.arch) or exit(69)
+    arch, mode = params.get(context.arch) or exit(69)
+    assembler = Ks(arch, mode)
 
     return assembler
 
