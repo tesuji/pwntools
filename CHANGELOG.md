@@ -9,9 +9,10 @@ The table below shows which release corresponds to each branch, and what date th
 
 | Version          | Branch   | Release Date           |
 | ---------------- | -------- | ---------------------- |
-| [4.15.0](#4150-dev)  | `dev`    |
-| [4.14.0](#4140-beta)  | `beta`   |
-| [4.13.1](#4131-stable)  | `stable`    | Sep 29, 2024
+| [5.0.0](#500-dev)  | `dev`    |
+| [4.15.0](#4150-beta)  | `beta`   |
+| [4.14.0](#4140-stable)  | `stable` | Jan 15, 2025
+| [4.13.1](#4131)  |          | Sep 29, 2024
 | [4.13.0](#4130)  |          | Aug 12, 2024
 | [4.12.0](#4120)  |          | Feb 22, 2024
 | [4.11.1](#4111)  |          | Nov 14, 2023
@@ -71,21 +72,47 @@ The table below shows which release corresponds to each branch, and what date th
 | [3.0.0](#300)    |          | Aug 20, 2016
 | [2.2.0](#220)    |          | Jan 5, 2015
 
-## 4.15.0 (`dev`)
+## 5.0.0 (`dev`)
 
+
+## 4.15.0 (`beta`)
+- [#2508][2508] Ignore a warning when compiling with asm on nix
 - [#2471][2471] Properly close spawned kitty window
 - [#2358][2358] Cache output of `asm()`
 - [#2457][2457] Catch exception of non-ELF files in checksec.
 - [#2444][2444] Add `ELF.close()` to release resources
 - [#2413][2413] libcdb: improve the search speed of `search_by_symbol_offsets` in local libc-database
+- [#2470][2470] Fix waiting for gdb under WSL2
+- [#2479][2479] Support extracting libraries from Docker image in `pwn template`
+- [#2483][2483] Only print `checksec` output of `ELF.libc` when it was printed for the `ELF` already
+- [#2482][2482] Throw error when using `sni` and setting `server_hostname` manually in `remote`
+- [#2478][2478] libcdb-cli: add `--offline-only`, refactor unstrip and add fetch parser for download libc-database
+- [#2484][2484] Allow to disable caching
+- [#2291][2291] Fix attaching to a gdbserver with tuple `gdb.attach(('0.0.0.0',12345))`
+- [#2410][2410] Add `tube.upload_manually` to upload files in chunks
+- [#2502][2502] Fix loading ELF files without valid .dynamic section
+- [#2476][2476] Deprecate 'keepends' argument in favor of 'drop' in `tube.recvline*`
+- [#2364][2364] Deprecate direct commandline scripts invocation and exclude nonsense ones
 
+[2508]: https://github.com/Gallopsled/pwntools/pull/2508
 [2471]: https://github.com/Gallopsled/pwntools/pull/2471
 [2358]: https://github.com/Gallopsled/pwntools/pull/2358
 [2457]: https://github.com/Gallopsled/pwntools/pull/2457
 [2444]: https://github.com/Gallopsled/pwntools/pull/2444
 [2413]: https://github.com/Gallopsled/pwntools/pull/2413
+[2470]: https://github.com/Gallopsled/pwntools/pull/2470
+[2479]: https://github.com/Gallopsled/pwntools/pull/2479
+[2483]: https://github.com/Gallopsled/pwntools/pull/2483
+[2482]: https://github.com/Gallopsled/pwntools/pull/2482
+[2478]: https://github.com/Gallopsled/pwntools/pull/2478
+[2484]: https://github.com/Gallopsled/pwntools/pull/2484
+[2291]: https://github.com/Gallopsled/pwntools/pull/2291
+[2410]: https://github.com/Gallopsled/pwntools/pull/2410
+[2502]: https://github.com/Gallopsled/pwntools/pull/2502
+[2476]: https://github.com/Gallopsled/pwntools/pull/2476
+[2364]: https://github.com/Gallopsled/pwntools/pull/2364
 
-## 4.14.0 (`beta`)
+## 4.14.0 (`stable`)
 
 - [#2356][2356] Add local libc database provider for libcdb
 - [#2360][2360] Add offline parameter for `search_by_hash` series function
@@ -107,6 +134,7 @@ The table below shows which release corresponds to each branch, and what date th
 - [#2382][2382] added optional port, gdb_args and gdbserver_args parameters to gdb.debug()
 - [#2435][2435] Speed up gdbserver handshake in gdb.debug()
 - [#2436][2436] Add resolution_addr parameter to Ret2dlresolvePayload
+- [#2497][2497] Fix remote.fromsocket() to handle AF_INET6 socket
 
 [2436]: https://github.com/Gallopsled/pwntools/pull/2436
 [2371]: https://github.com/Gallopsled/pwntools/pull/2371
@@ -128,14 +156,9 @@ The table below shows which release corresponds to each branch, and what date th
 [2382]: https://github.com/Gallopsled/pwntools/pull/2382
 [2435]: https://github.com/Gallopsled/pwntools/pull/2435
 [2437]: https://github.com/Gallopsled/pwntools/pull/2437
-
-## 4.13.2
-
-- [#2497][2497] Fix remote.fromsocket() to handle AF_INET6 socket
-
 [2497]: https://github.com/Gallopsled/pwntools/pull/2497
 
-## 4.13.1 (`stable`)
+## 4.13.1
 
 - [#2445][2445] Fix parsing the PLT on Windows
 - [#2466][2466] Fix PLT emulation with Unicorn 2.1.0
