@@ -52,7 +52,7 @@ dependencies = [
     "six>=1.12.0",
     "rpyc",
     "colored_traceback",
-    "unix-ar; python_version>='3.6'",
+    "unix-ar; python_version >= '3.6'",
     "zstandard",
 ]
 
