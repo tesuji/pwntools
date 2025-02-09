@@ -74,6 +74,7 @@ The table below shows which release corresponds to each branch, and what date th
 
 ## 5.0.0 (`dev`)
 
+- [#2541][2541] Fix blocking `tube.remote()` when DNS resolution fail.
 - [#2519][2519] Drop Python 2.7 support / Require Python 3.10
 - [#2507][2507] Add `+LINUX` and `+WINDOWS` doctest options and start proper testing on Windows
 - [#2522][2522] Support starting a kitty debugging window with the 'kitten' command
@@ -84,6 +85,7 @@ The table below shows which release corresponds to each branch, and what date th
 - [#2530][2530] Do NOT error when passing directory arguments in `checksec` commandline tool.
 - [#2529][2529] Add LoongArch64 support
 
+[2541]: https://github.com/Gallopsled/pwntools/pull/2541
 [2519]: https://github.com/Gallopsled/pwntools/pull/2519
 [2507]: https://github.com/Gallopsled/pwntools/pull/2507
 [2522]: https://github.com/Gallopsled/pwntools/pull/2522

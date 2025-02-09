@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 from __future__ import division
 
+import asyncio
 import socket
 import socks
 
@@ -109,8 +110,17 @@ class remote(sock):
         sock    = None
         timeout = self.timeout
 
+        async def resolve_hostname(host, port, fam=0, typ=0, proto=0, flags=0):
+            loop = asyncio.get_event_loop()
+            result = await loop.getaddrinfo(host, port, family=fam, type=typ, proto=proto, flags=flags)
+            return result
+
         with self.waitfor('Opening connection to %s on port %s' % (self.rhost, self.rport)) as h:
-            for res in socket.getaddrinfo(self.rhost, self.rport, fam, typ, 0, socket.AI_PASSIVE):
+            # Using asyncio to avoid blocking when DNS resolution fail. It's probably better
+            # to use async all the ways to `sock.connect`. However, let's keep the changes
+            # small until we have the needs.
+            hostnames = asyncio.run(resolve_hostname(self.rhost, self.rport, fam, typ, 0, socket.AI_PASSIVE))
+            for res in hostnames:
                 self.family, self.type, self.proto, _canonname, sockaddr = res
 
                 if self.type not in [socket.SOCK_STREAM, socket.SOCK_DGRAM]:
