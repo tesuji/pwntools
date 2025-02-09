@@ -112,7 +112,10 @@ class remote(sock):
 
         async def resolve_hostname(host, port, fam=0, typ=0, proto=0, flags=0):
             loop = asyncio.get_event_loop()
-            result = await loop.getaddrinfo(host, port, family=fam, type=typ, proto=proto, flags=flags)
+            try:
+                result = await loop.getaddrinfo(host, port, family=fam, type=typ, proto=proto, flags=flags)
+            except asyncio.exceptions.CancelledError:
+                result = []
             return result
 
         with self.waitfor('Opening connection to %s on port %s' % (self.rhost, self.rport)) as h:
